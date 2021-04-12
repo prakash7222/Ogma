@@ -1,0 +1,104 @@
+<script>
+
+</script>
+<h1>welcome </h1>
+<form method="POST">
+    <label for="fname">Name of company:</label>
+    <input type="text" id="ncompany" name="ncompany"><br><br>
+<input type="submit" value="Scan">
+</form>
+<div id='wordResult'></div>
+
+<script>
+    $(document).ready(function () {
+
+        $('dashboard').on('submit', function (event) {
+
+            $.ajax({
+                data: {
+                    ncompany: $('#ncompany').val()
+                },
+                type: 'POST',
+                url: '/dashboard'
+            })
+                .done(function (data) {
+
+                    if (data.error) {
+                        $('#errorAlert').text(data.error).show();
+                        $('#successAlert').hide();
+                    }
+                    else {
+                        $('#successAlert').text(data).show();
+                        $('#errorAlert').hide();
+                    }
+
+                });
+
+            event.preventDefault();
+
+        });
+
+    });
+</script>
+
+
+
+
+<head>
+    <meta charset="utf-8" />
+    <title>Chart.js Example</title>
+    <!-- import plugin script -->
+    <script src='static/Chart.min.js'></script>
+</head>
+
+<h1>Line Chart</h1>
+<!-- bar chart canvas element -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+<canvas id="successAlert" width="600" height="400"></canvas>
+<script>
+    // Global parameters:
+    // do not resize the chart canvas when its container does (keep at 600x400px)
+    Chart.defaults.global.responsive = false;
+
+    // define the chart data
+    var chartData = {
+        labels: [{% for item in labels %}
+    "{{item}}",
+        {% endfor %}],
+    datasets: [{
+        label: '{{ legend }}',
+        fill: true,
+        lineTension: 0.1,
+        backgroundColor: "rgba(75,192,192,0.4)",
+        borderColor: "rgba(75,192,192,1)",
+        borderCapStyle: 'butt',
+        borderDash: [],
+        borderDashOffset: 0.0,
+        borderJoinStyle: 'miter',
+        pointBorderColor: "rgba(75,192,192,1)",
+        pointBackgroundColor: "#fff",
+        pointBorderWidth: 1,
+        pointHoverRadius: 5,
+        pointHoverBackgroundColor: "rgba(75,192,192,1)",
+        pointHoverBorderColor: "rgba(220,220,220,1)",
+        pointHoverBorderWidth: 2,
+        pointRadius: 1,
+        pointHitRadius: 10,
+        data: [{% for item in values %}
+             {{ item }},
+    {% endfor %}],
+        spanGaps: false
+ }]
+ }
+
+    // get chart canvas
+    var ctx = document.getElementById("myChart").getContext("2d");
+
+    // create the chart using the chart canvas
+    var myChart = new Chart(ctx, {
+        type: 'line',
+        data: chartData,
+    });
+</script>
+<div id="errorAlert" class="alert alert-danger" role="alert" style="display:none;"></div>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js" crossorigin="anonymous"></script>
